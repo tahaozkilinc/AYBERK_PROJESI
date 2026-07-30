@@ -4,9 +4,9 @@ import Script from "next/script";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import TopbarActions from "./topbar-actions";
+import ReportStyles from "./report-styles";
 
 const contentDir = path.join(process.cwd(), "content");
-const reportCss = fs.readFileSync(path.join(contentDir, "report.css"), "utf8");
 const reportBody = fs.readFileSync(path.join(contentDir, "report-body.html"), "utf8");
 const reportScript = fs.readFileSync(path.join(contentDir, "report-script.js"), "utf8");
 
@@ -33,7 +33,7 @@ export default async function ReportPage() {
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: reportCss }} />
+      <ReportStyles />
       <TopbarActions isAdmin={profile?.role === "admin"} />
       <div dangerouslySetInnerHTML={{ __html: reportBody }} />
       <Script

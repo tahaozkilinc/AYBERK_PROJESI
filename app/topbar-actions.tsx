@@ -2,24 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import SignOutButton from "./sign-out-button";
 
 export default function TopbarActions({ isAdmin }: { isAdmin: boolean }) {
-  const router = useRouter();
   const [container, setContainer] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     setContainer(document.querySelector<HTMLElement>(".topbar-actions"));
   }, []);
-
-  async function handleLogout() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.replace("/login");
-    router.refresh();
-  }
 
   const content = (
     <>
@@ -28,9 +19,10 @@ export default function TopbarActions({ isAdmin }: { isAdmin: boolean }) {
           Kullanıcılar
         </Link>
       ) : null}
-      <button type="button" className="button" onClick={handleLogout} aria-label="Çıkış yap">
-        Çıkış yap
-      </button>
+      <Link className="button" href="/account">
+        Hesabım
+      </Link>
+      <SignOutButton />
     </>
   );
 

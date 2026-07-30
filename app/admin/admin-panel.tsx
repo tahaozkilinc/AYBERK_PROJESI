@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition, type FormEvent } from "react";
-import Link from "next/link";
 import styles from "./admin.module.css";
 import {
   createUserAction,
@@ -117,71 +116,63 @@ export default function AdminPanel({
   }
 
   return (
-    <main className={styles.page}>
-      <div className={styles.wrap}>
-        <div className={styles.header}>
-          <div>
-            <p className={styles.eyebrow}>İthal Emtia</p>
-            <h1 className={styles.title}>Kullanıcı Yönetimi</h1>
-          </div>
-          <Link className={styles.backLink} href="/">
-            ← Rapora dön
-          </Link>
+    <>
+      {banner ? (
+        <div
+          className={`${styles.banner} ${
+            banner.type === "success" ? styles.bannerSuccess : styles.bannerError
+          }`}
+        >
+          {banner.message}
         </div>
+      ) : null}
 
-        {banner ? (
-          <div
-            className={`${styles.banner} ${
-              banner.type === "success" ? styles.bannerSuccess : styles.bannerError
-            }`}
-          >
-            {banner.message}
+      <section className="panel" style={{ marginBottom: 20 }}>
+        <div className="panel-head">
+          <div>
+            <h2>Yeni kullanıcı ekle</h2>
+            <p className="panel-subtitle">
+              Buradan eklenen hesaplar dışında hiç kimse rapora giriş yapamaz.
+            </p>
           </div>
-        ) : null}
+        </div>
+        <form className={styles.form} onSubmit={handleCreate}>
+          <label className={styles.field}>
+            <span className={styles.label}>E-posta</span>
+            <input className="control" type="email" name="email" required placeholder="ornek@sirket.com" />
+          </label>
+          <label className={styles.field}>
+            <span className={styles.label}>Şifre (boş bırakılırsa otomatik üretilir)</span>
+            <input className="control" type="text" name="password" />
+          </label>
+          <label className={styles.field}>
+            <span className={styles.label}>Rol</span>
+            <select className="control" name="role" defaultValue="user">
+              <option value="user">Kullanıcı</option>
+              <option value="admin">Admin</option>
+            </select>
+          </label>
+          <button className="button button-primary" type="submit" disabled={isPending}>
+            {isPending ? "Ekleniyor…" : "Kullanıcı ekle"}
+          </button>
+        </form>
+      </section>
 
-        <section className={styles.card}>
-          <h2 className={styles.cardTitle}>Yeni kullanıcı ekle</h2>
-          <form className={styles.form} onSubmit={handleCreate}>
-            <label className={styles.field}>
-              <span className={styles.label}>E-posta</span>
-              <input
-                className={styles.input}
-                type="email"
-                name="email"
-                required
-                placeholder="ornek@sirket.com"
-              />
-            </label>
-            <label className={styles.field}>
-              <span className={styles.label}>Şifre (boş bırakılırsa otomatik üretilir)</span>
-              <input className={styles.input} type="text" name="password" />
-            </label>
-            <label className={styles.field}>
-              <span className={styles.label}>Rol</span>
-              <select className={styles.select} name="role" defaultValue="user">
-                <option value="user">Kullanıcı</option>
-                <option value="admin">Admin</option>
-              </select>
-            </label>
-            <button className={styles.submit} type="submit" disabled={isPending}>
-              {isPending ? "Ekleniyor…" : "Kullanıcı ekle"}
-            </button>
-          </form>
-          <p className={styles.hint}>
-            Buradan eklenen hesaplar dışında hiç kimse rapora giriş yapamaz.
-          </p>
-        </section>
-
-        <section className={styles.card}>
-          <h2 className={styles.cardTitle}>Erişimi olan kullanıcılar ({users.length})</h2>
-          <div className={styles.tableScroll}>
-          <table className={styles.table}>
+      <section className="panel">
+        <div className="panel-head">
+          <div>
+            <h2>Erişimi olan kullanıcılar</h2>
+            <p className="panel-subtitle">{users.length} hesap</p>
+          </div>
+        </div>
+        <div className="table-scroll">
+          <table style={{ minWidth: 0 }}>
             <thead>
               <tr>
-                <th>E-posta</th>
-                <th>Rol</th>
-                <th>Eklenme</th>
-                <th>İşlemler</th>
+                <th scope="col">E-posta</th>
+                <th scope="col">Rol</th>
+                <th scope="col">Eklenme</th>
+                <th scope="col">İşlemler</th>
               </tr>
             </thead>
             <tbody>
@@ -193,7 +184,7 @@ export default function AdminPanel({
                   </td>
                   <td>
                     <select
-                      className={styles.select}
+                      className="control"
                       value={u.role}
                       disabled={rowPending === u.id}
                       onChange={(event) =>
@@ -208,7 +199,7 @@ export default function AdminPanel({
                   <td>
                     <div className={styles.rowActions}>
                       <button
-                        className={styles.smallButton}
+                        className="button"
                         type="button"
                         disabled={rowPending === u.id}
                         onClick={() => handleResetPassword(u.id, u.email)}
@@ -231,9 +222,8 @@ export default function AdminPanel({
               ))}
             </tbody>
           </table>
-          </div>
-        </section>
-      </div>
-    </main>
+        </div>
+      </section>
+    </>
   );
 }
