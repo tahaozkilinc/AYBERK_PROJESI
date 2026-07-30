@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import Script from "next/script";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import LogoutButton from "./logout-button";
@@ -35,7 +36,11 @@ export default async function ReportPage() {
       <style dangerouslySetInnerHTML={{ __html: reportCss }} />
       <LogoutButton />
       <div dangerouslySetInnerHTML={{ __html: reportBody }} />
-      <script dangerouslySetInnerHTML={{ __html: reportScript }} />
+      <Script
+        id="report-init"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{ __html: reportScript }}
+      />
     </>
   );
 }
