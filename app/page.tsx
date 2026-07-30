@@ -3,7 +3,7 @@ import path from "node:path";
 import Script from "next/script";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import LogoutButton from "./logout-button";
+import TopbarActions from "./topbar-actions";
 
 const contentDir = path.join(process.cwd(), "content");
 const reportCss = fs.readFileSync(path.join(contentDir, "report.css"), "utf8");
@@ -22,7 +22,7 @@ export default async function ReportPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id")
+    .select("id, role")
     .eq("id", user!.id)
     .maybeSingle();
 
@@ -34,7 +34,7 @@ export default async function ReportPage() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: reportCss }} />
-      <LogoutButton />
+      <TopbarActions isAdmin={profile?.role === "admin"} />
       <div dangerouslySetInnerHTML={{ __html: reportBody }} />
       <Script
         id="report-init"

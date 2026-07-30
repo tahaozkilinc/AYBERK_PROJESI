@@ -307,6 +307,7 @@
       countryOptions: $("#country-filter-options"),
       countrySelectionCount: $("#country-selection-count"),
       sort: $("#sort-order"),
+      pageSize: $("#page-size"),
       reset: $("#reset-filters"),
       theme: $("#theme-toggle"),
       rows: $("#shipment-rows"),
@@ -1115,7 +1116,11 @@
 
     const renderTable = (rows) => {
       $("#table-subtitle").textContent = `${rows.length} sevkiyat · ${numberFormat.format(rows.reduce((sum, row) => sum + row.tonnage, 0))} MT`;
-      $("#table-count").textContent = `${rows.length} kayıt gösteriliyor`;
+      const pageSizeValue = elements.pageSize.value;
+      const visibleRows = pageSizeValue === "all" ? rows : rows.slice(0, Number(pageSizeValue));
+      $("#table-count").textContent = visibleRows.length < rows.length
+        ? `${rows.length} kayıttan ${visibleRows.length} tanesi gösteriliyor`
+        : `${rows.length} kayıt gösteriliyor`;
       $("#user-record-count").textContent = `${userRecords.length} kullanıcı kaydı`;
       const sortLabels = {
         "date-desc": "Tarih: yeni → eski",
@@ -1124,11 +1129,11 @@
         "commodity-asc": "Emtia: A → Z",
       };
       $("#table-sort-label").textContent = sortLabels[elements.sort.value] || sortLabels["date-desc"];
-      if (!rows.length) {
+      if (!visibleRows.length) {
         elements.rows.innerHTML = '<tr class="table-empty"><td colspan="7">Filtrelerle eşleşen sevkiyat bulunamadı.</td></tr>';
         return;
       }
-      elements.rows.innerHTML = rows.map((record) => `
+      elements.rows.innerHTML = visibleRows.map((record) => `
         <tr class="${record.userCreated ? "user-record-row" : ""}">
           <td>${escapeHtml(formatPeriod(record.date))}</td>
           <td>${escapeHtml(record.commodity)}</td>
@@ -1710,6 +1715,7 @@
       })
     );
     elements.sort.addEventListener("change", render);
+    elements.pageSize.addEventListener("change", render);
     elements.search.addEventListener("input", () => {
       resetMapView();
       render();

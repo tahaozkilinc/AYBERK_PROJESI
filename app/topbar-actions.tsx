@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
-export default function LogoutButton() {
+export default function TopbarActions({ isAdmin }: { isAdmin: boolean }) {
   const router = useRouter();
   const [container, setContainer] = useState<HTMLElement | null>(null);
 
@@ -20,20 +21,22 @@ export default function LogoutButton() {
     router.refresh();
   }
 
-  const button = (
-    <button
-      type="button"
-      className="button"
-      onClick={handleLogout}
-      aria-label="Çıkış yap"
-    >
-      Çıkış yap
-    </button>
+  const content = (
+    <>
+      {isAdmin ? (
+        <Link className="button" href="/admin">
+          Kullanıcılar
+        </Link>
+      ) : null}
+      <button type="button" className="button" onClick={handleLogout} aria-label="Çıkış yap">
+        Çıkış yap
+      </button>
+    </>
   );
 
   if (!container) {
     return null;
   }
 
-  return createPortal(button, container);
+  return createPortal(content, container);
 }
